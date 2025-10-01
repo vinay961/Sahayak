@@ -1,102 +1,115 @@
+"use client";
+import Link from "next/link";
+import { useState } from "react";
+import { Menu, X } from "lucide-react";
+import { schemes } from "@/data/schemes";
 import Image from "next/image";
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [isOpen, setIsOpen] = useState(false);
+  const toggleMenu = () => setIsOpen(!isOpen);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  return (
+    <div className="font-sans bg-gray-50 min-h-screen">
+
+      {/* Navbar */}
+      <header className="bg-white shadow-md sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+          <h1 className="text-2xl font-bold text-blue-700">Sahayak</h1>
+
+          {/* Desktop Links */}
+          <nav className="hidden md:flex space-x-6 text-gray-700">
+            <Link href="/" className="hover:text-blue-500 font-medium">Home</Link>
+            <Link href="/schemes" className="hover:text-blue-500 font-medium">Schemes</Link>
+            <Link href="/news" className="hover:text-blue-500 font-medium">News</Link>
+            <Link href="/about" className="hover:text-blue-500 font-medium">About</Link>
+          </nav>
+
+          {/* Hamburger for mobile */}
+          <div className="md:hidden">
+            <button onClick={toggleMenu} className="text-gray-700 focus:outline-none">
+              {isOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+
+        {/* Mobile Menu */}
+        {isOpen && (
+          <nav className="md:hidden bg-white shadow-md px-6 py-4 flex flex-col gap-4">
+            <Link href="/" className="text-gray-700 hover:text-blue-500 font-medium" onClick={toggleMenu}>Home</Link>
+            <Link href="/schemes" className="text-gray-700 hover:text-blue-500 font-medium" onClick={toggleMenu}>Schemes</Link>
+            <Link href="/news" className="text-gray-700 hover:text-blue-500 font-medium" onClick={toggleMenu}>News</Link>
+            <Link href="/about" className="text-gray-700 hover:text-blue-500 font-medium" onClick={toggleMenu}>About</Link>
+          </nav>
+        )}
+      </header>
+
+      <section className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-24 px-6">
+        <div className="max-w-4xl mx-auto text-center sm:text-left">
+          <h2 className="text-4xl sm:text-5xl font-bold mb-4">
+            Discover Government Schemes & Current Affairs
+          </h2>
+          <p className="text-lg sm:text-xl mb-6 text-gray-200">
+            Your one-stop platform to explore schemes, eligibility, benefits, and stay updated with the latest news for exam preparation or general knowledge.
+          </p>
+          <div className="flex justify-center sm:justify-start gap-4">
+            <Link href="/schemes" className="px-6 py-3 bg-white text-blue-700 font-semibold rounded-lg hover:bg-gray-100 transition">
+              Explore Schemes
+            </Link>
+            <Link href="/news" className="px-6 py-3 border border-white text-white font-semibold rounded-lg hover:bg-white hover:text-blue-700 transition">
+              Latest News
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="max-w-7xl mx-auto px-6 py-16">
+        <h3 className="text-3xl font-bold text-gray-800 mb-10 text-center">Why Use Our Platform?</h3>
+        <div className="grid md:grid-cols-3 gap-8">
+          <div className="bg-white shadow-md rounded-2xl p-6 text-center hover:shadow-xl transition">
+            <Image src="/icons/scheme.png" alt="Scheme Icon" width={64} height={64} className="mx-auto mb-4" />
+            <h4 className="font-semibold text-xl mb-2 text-gray-800">Explore Schemes</h4>
+            <p className="text-gray-600">Get complete details about government schemes, eligibility, and benefits in one place.</p>
+          </div>
+          <div className="bg-white shadow-md rounded-2xl p-6 text-center hover:shadow-xl transition">
+            <Image src="/icons/update.png" alt="News Icon" width={64} height={64} className="mx-auto mb-4" />
+            <h4 className="font-semibold text-xl mb-2 text-gray-800">Stay Updated</h4>
+            <p className="text-gray-600">Read curated current affairs and news for exam prep or general awareness.</p>
+          </div>
+          <div className="bg-white shadow-md rounded-2xl p-6 text-center hover:shadow-xl transition">
+            <Image src="/icons/exam.png" alt="Exam Icon" width={64} height={64} className="mx-auto mb-4" />
+            <h4 className="font-semibold text-xl mb-2 text-gray-800">Exam Preparation</h4>
+            <p className="text-gray-600">Access structured content to help you prepare for government exams efficiently.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-gray-100 py-16 px-6">
+        <h3 className="text-3xl font-bold text-gray-800 mb-8 text-center">Top Schemes</h3>
+        <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-6">
+          {schemes.slice(0, 3).map((scheme) => (
+            <div key={scheme.id} className="bg-white rounded-2xl shadow-md p-6 hover:shadow-xl transition">
+              <h4 className="text-xl font-semibold mb-2 text-gray-800">{scheme.title}</h4>
+              <p className="text-gray-600 mb-1"><strong>Eligibility:</strong> {scheme.eligibility}</p>
+              <p className="text-gray-600 mb-3"><strong>Benefits:</strong> {scheme.benefits}</p>
+              <Link href={`/schemes/${scheme.id}`} className="text-blue-700 font-semibold hover:underline">
+                View Details →
+              </Link>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <footer className="bg-white py-8 mt-16 shadow-inner">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-gray-600">&copy; 2025 Social Welfare Platform. All rights reserved.</p>
+          <div className="flex gap-4">
+            <Link href="/" className="text-gray-600 hover:text-blue-700">Home</Link>
+            <Link href="/schemes" className="text-gray-600 hover:text-blue-700">Schemes</Link>
+            <Link href="/news" className="text-gray-600 hover:text-blue-700">News</Link>
+            <Link href="/about" className="text-gray-600 hover:text-blue-700">About</Link>
+          </div>
+        </div>
       </footer>
     </div>
   );
