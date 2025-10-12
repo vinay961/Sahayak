@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from "react";
 import { schemes } from "@/data/schemes";
 import { Search, X } from "lucide-react";
+import Header from "../components/header.js";
 import Link from "next/link";
 
 export default function SchemesPage() {
@@ -51,6 +52,7 @@ export default function SchemesPage() {
 
   return (
     <div className="font-sans bg-gray-50 min-h-screen">
+      <Header />
       <section className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-20 px-6">
         <div className="max-w-5xl mx-auto text-center">
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">

@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { newsData } from "@/data/news";
 import Link from "next/link";
 import Image from "next/image";
+import Header from "../components/header.js";
 import { Search, ChevronDown } from "lucide-react";
 
 function CustomDropdown({ options, selected, onChange, placeholder }) {
@@ -97,7 +98,7 @@ export default function NewsPage() {
 
   return (
     <div className="font-sans bg-gray-50 min-h-screen">
-      {/* Hero Section */}
+      <Header />
       <section className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-20 px-6">
         <div className="max-w-5xl mx-auto text-center">
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">Weekly News Updates</h1>
