@@ -18,9 +18,10 @@ export async function POST(request) {
         await dbConnect();
         const newScheme = new Scheme(body);
         await newScheme.save();
-        return new Response(JSON.stringify(newScheme), { status: 201, headers: { 'Content-Type': 'application/json' } });
+        return new Response(JSON.stringify({ success: true }), { status: 201, headers: { 'Content-Type': 'application/json' } });
     }
     catch (error) {
+        console.log(error);
         return new Response(JSON.stringify({ error: 'Failed to create scheme' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
     }
 }

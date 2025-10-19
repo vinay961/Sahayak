@@ -164,5 +164,27 @@ export const newsData = [
     image: "/news/ai-center.jpg",
     description:
       "The center will focus on AI research, machine learning, and smart city solutions to boost India’s technology ecosystem.",
+  },
+  {
+    id: 16,
+    title: "PM Modi inaugurates new AI research center in Bengaluru",
+    category: "Technology / National",
+    month: "October 2025",
+    week: "Week 2",
+    date: "2025-10-10",
+    image: "/news/ai-center.jpg",
+    description:
+      "The center will focus on AI research, machine learning, and smart city solutions to boost India’s technology ecosystem.",
+  },
+  {
+    id: 17,
+    title: "PM Modi inaugurates new AI research center in Bengaluru",
+    category: "Technology / National",
+    month: "October 2025",
+    week: "Week 3",
+    date: "2025-10-19",
+    image: "/news/ai-center.jpg",
+    description:
+      "The center will focus on AI research, machine learning, and smart city solutions to boost India’s technology ecosystem.",
   }
 ];

@@ -1,5 +1,6 @@
 "use client";
-import { use, useState } from "react";
+import Image from "next/image";
+import { useState } from "react";
 
 const newsData = [
   {
@@ -44,7 +45,7 @@ const newsData = [
 ];
 
 export default function NewsDetail({ params }) {
-  const { id } = use(params);
+  const { id } = params;
   const newsItem = newsData.find((n) => n.id.toString() === id);
   const [lang, setLang] = useState("en");
 
@@ -94,13 +95,13 @@ export default function NewsDetail({ params }) {
         </p>
 
         {/* Featured Image */}
-        <div className="mb-8">
-          <img
-            src={newsItem.image}
-            alt={newsItem.title}
-            className="w-full h-auto rounded-xl shadow-lg"
-          />
-        </div>
+        <Image
+          src={newsItem.image}
+          alt={newsItem.title}
+          width={1200}
+          height={675}
+          className="w-full h-auto rounded-xl shadow-lg"
+        />
 
         <p className="text-base sm:text-lg text-gray-700 mb-6 leading-relaxed">
           {lang === "en" ? newsItem.summary.en : newsItem.summary.hi}

@@ -1,58 +1,50 @@
 "use client";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Plus, Edit, Trash2, Newspaper, Leaf } from "lucide-react";
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState("news");
+  const router = useRouter();
 
   const sampleNews = [
-    {
-      id: 1,
-      title: "Green Bharat Mission Launched",
-      category: "Environment / National",
-      month: "September 2025",
-      date: "September 18, 2025",
-    },
-    {
-      id: 2,
-      title: "PM Inaugurates Smart Agriculture Drive",
-      category: "Agriculture / Farmers Welfare",
-      month: "August 2025",
-      date: "August 10, 2025",
-    },
+    { id: 1, title: "Green Bharat Mission Launched", category: "Environment / National", month: "September 2025", date: "September 18, 2025" },
+    { id: 2, title: "PM Inaugurates Smart Agriculture Drive", category: "Agriculture / Farmers Welfare", month: "August 2025", date: "August 10, 2025" },
   ];
 
   const sampleSchemes = [
-    {
-      id: 101,
-      title: "PM-KISAN Yojana",
-      category: "Farmers Welfare",
-      launchDate: "February 2019",
-    },
-    {
-      id: 102,
-      title: "Soil Health Card Scheme",
-      category: "Agriculture",
-      launchDate: "2015",
-    },
+    { id: 101, title: "PM-KISAN Yojana", category: "Farmers Welfare", launchDate: "February 2019" },
+    { id: 102, title: "Soil Health Card Scheme", category: "Agriculture", launchDate: "2015" },
   ];
 
+  const handleAddClick = () => {
+    if (activeTab === "news") router.push("/dashboard/add-news");
+    else router.push("/dashboard/add-scheme");
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-semibold text-gray-800">Admin Dashboard</h1>
-        <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+        <h1 className="text-2xl sm:text-3xl font-semibold text-gray-800">
+          Admin Dashboard
+        </h1>
+        <button
+          onClick={handleAddClick}
+          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition-all"
+        >
           <Plus size={18} /> Add New
         </button>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-4 border-b pb-2 mb-6">
+      <div className="flex flex-wrap gap-2 sm:gap-4 border-b pb-2 mb-6">
         <button
           onClick={() => setActiveTab("news")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
-            activeTab === "news" ? "bg-blue-100 text-blue-700" : "text-gray-600 hover:text-blue-600"
+          className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base ${
+            activeTab === "news"
+              ? "bg-blue-100 text-blue-700"
+              : "text-gray-600 hover:text-blue-600"
           }`}
         >
           <Newspaper size={18} /> News
@@ -60,19 +52,21 @@ export default function DashboardPage() {
 
         <button
           onClick={() => setActiveTab("schemes")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
-            activeTab === "schemes" ? "bg-green-100 text-green-700" : "text-gray-600 hover:text-green-600"
+          className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base ${
+            activeTab === "schemes"
+              ? "bg-green-100 text-green-700"
+              : "text-gray-600 hover:text-green-600"
           }`}
         >
           <Leaf size={18} /> Schemes
         </button>
       </div>
 
-      {/* Data Table */}
-      <div className="bg-white shadow-md rounded-xl p-4">
-        <table className="w-full border-collapse">
+      {/* Table Section */}
+      <div className="bg-white shadow-md rounded-xl overflow-x-auto">
+        <table className="w-full min-w-[600px] border-collapse">
           <thead>
-            <tr className="bg-gray-100 text-gray-700 text-sm uppercase">
+            <tr className="bg-gray-100 text-gray-700 text-xs sm:text-sm uppercase">
               <th className="text-left p-3">ID</th>
               <th className="text-left p-3">Title</th>
               <th className="text-left p-3">Category</th>
@@ -84,9 +78,9 @@ export default function DashboardPage() {
             {(activeTab === "news" ? sampleNews : sampleSchemes).map((item) => (
               <tr
                 key={item.id}
-                className="border-b hover:bg-gray-50 transition-all duration-150"
+                className="border-b hover:bg-gray-50 transition-all duration-150 text-sm sm:text-base"
               >
-                <td className="p-3">{item.id}</td>
+                <td className="p-3 text-gray-600">{item.id}</td>
                 <td className="p-3 font-medium text-gray-800">{item.title}</td>
                 <td className="p-3 text-gray-600">{item.category}</td>
                 <td className="p-3 text-gray-500">
@@ -105,6 +99,11 @@ export default function DashboardPage() {
           </tbody>
         </table>
       </div>
+
+      {/* Mobile friendly note */}
+      <p className="text-xs text-gray-500 mt-3 sm:hidden text-center">
+        Tip: Swipe left/right to view all columns →
+      </p>
     </div>
   );
 }
