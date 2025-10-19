@@ -10,7 +10,7 @@ const schemeSchema = new mongoose.Schema({
     required: true,
   },
   launchDate: {
-    type: String, // you can also use Date if you want proper date handling
+    type: String,
     required: true,
   },
   image: {
@@ -37,6 +37,8 @@ const schemeSchema = new mongoose.Schema({
   ],
 });
 
-const Scheme = mongoose.model("Scheme", schemeSchema);
+// const Scheme = mongoose.model("Scheme", schemeSchema);
+const Scheme = mongoose.models.Scheme || mongoose.model("Scheme", schemeSchema);
+// models is used to find existing models to avoid OverwriteModelError wheareas model creates a new model every time the code is run.
 
 export default Scheme;
