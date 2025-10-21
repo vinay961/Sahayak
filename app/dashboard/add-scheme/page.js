@@ -50,8 +50,18 @@ export default function AddSchemePage() {
         body: JSON.stringify(payload),
       });
       const result = await response.json();
-      if (result.success) alert("Scheme added successfully!");
-      else alert("Error: " + result.message);
+      if (result.success) {
+        alert("Scheme added successfully!");
+        setFormData({
+          title: "",
+          category: "",
+          launchDate: "",
+          image: "",
+          descriptionPoints: [{ en: "", hi: "" }],
+          eligibility: [{ en: "", hi: "" }],
+          benefits: [{ en: "", hi: "" }],
+        });
+      } else alert("Error: " + result.message);
     } catch (error) {
       console.error("Error adding scheme:", error);
       alert("An error occurred while adding scheme.");

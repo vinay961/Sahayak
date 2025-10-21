@@ -65,7 +65,23 @@ export default function AddNewsPage() {
         body: JSON.stringify(payload),
       });
       const result = await response.json();
-      if (result.success) alert("News added successfully!");
+      if (result.success){
+        alert("News article added successfully!");
+        setFormData({
+          title: "",
+          category: "",
+          month: "",
+          week: "",
+          date: "",
+          image: "",
+          summaryEn: "",
+          summaryHi: "",
+          highlightsEn: [""],
+          highlightsHi: [""],
+          contentEn: [""],
+          contentHi: [""],
+        });
+      }
       else alert("Error: " + result.message);
     } catch (error) {
       console.error("Error adding news:", error);

@@ -4,8 +4,20 @@ import News from "@/model/news";
 export async function GET(request) {
     try {
         await dbConnect();
-        const news = await News.find();
-        return new Response(JSON.stringify(news), { status: 200, headers: { 'Content-Type': 'application/json' } });
+        const { searchParams } = new URL(request.url);
+        const id = searchParams.get('id');
+
+        if (id) {
+            const newsItem = await News.findById(id);
+            if (!newsItem) {
+                return new Response(JSON.stringify({ error: 'News not found' }), { status: 404, headers: { 'Content-Type': 'application/json' } });
+            }
+            return new Response(JSON.stringify(newsItem), { status: 200, headers: { 'Content-Type': 'application/json' } });
+        }
+        else {
+            const newsItems = await News.find();
+            return new Response(JSON.stringify(newsItems), { status: 200, headers: { 'Content-Type': 'application/json' } });
+        }
     }
     catch (error) {
         return new Response(JSON.stringify({ error: 'Failed to fetch news' }), { status: 500, headers: { 'Content-Type': 'application/json' } });

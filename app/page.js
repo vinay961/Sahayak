@@ -19,12 +19,10 @@ export default function Home() {
       <Header className="sticky top-0 z-50 bg-white shadow-md" />
 
       <section className="relative bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-28 px-6 overflow-hidden">
-        {/* Abstract shapes with Tailwind CSS */}
         <div className="absolute -top-32 -left-32 w-96 h-96 bg-white rounded-full opacity-10 animate-pulse-slow"></div>
         <div className="absolute -bottom-32 -right-24 w-96 h-96 bg-purple-200 rounded-full opacity-10 animate-pulse-slow delay-200"></div>
         <div className="absolute top-10 right-1/2 w-72 h-72 bg-yellow-200 rounded-full opacity-5 animate-pulse-slow delay-400"></div>
 
-        {/* Content */}
         <div className="relative max-w-5xl mx-auto text-center sm:text-left">
           <h1 className="text-4xl sm:text-5xl font-bold mb-4 animate-fadeIn">
             Discover Government Schemes & Current Affairs
@@ -49,7 +47,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-      {/* Why Use Our Platform */}
       <section className="max-w-7xl mx-auto px-6 py-20">
         <h2 className="text-3xl font-bold text-gray-800 mb-12 text-center">
           Why Use Our Platform?
@@ -106,8 +103,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Top Schemes */}
-      <section className="relative bg-gray-50 py-20 px-6">
+      <section className="relative bg-gray-100 py-20 px-6">
         <h2 className="text-3xl font-bold text-gray-800 mb-12 text-center">
           Top Schemes
         </h2>

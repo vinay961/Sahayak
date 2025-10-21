@@ -1,44 +1,80 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
-import { schemes } from "@/data/schemes";
 import { Search, X } from "lucide-react";
 import Header from "../components/header.js";
 import Link from "next/link";
 
 export default function SchemesPage() {
   const [query, setQuery] = useState("");
+  const [schemes, setSchemes] = useState([]);
   const [debouncedQuery, setDebouncedQuery] = useState(query);
   const [category, setCategory] = useState("All");
   const scrollRef = useRef(null);
 
   const categories = [
     "All",
+    "Agriculture",
     "Education",
     "Health",
     "Finance",
     "Women",
     "Employment",
+    "Housing",
   ];
 
+  // Debounce user input for smooth searching
   useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedQuery(query);
-    }, 300);
-
+    const handler = setTimeout(() => setDebouncedQuery(query), 300);
     return () => clearTimeout(handler);
   }, [query]);
 
+  // Fetch schemes from API
+  const fetchSchemes = async () => {
+    try {
+      const response = await fetch("/api/schemes");
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching schemes:", error);
+      return [];
+    }
+  };
+
+  useEffect(() => {
+    const loadSchemes = async () => {
+      const fetchedSchemes = await fetchSchemes();
+      setSchemes(fetchedSchemes);
+    };
+    loadSchemes();
+  }, []);
+
+  // Scroll to top when filters/search change
+  useEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
+  }, [debouncedQuery, category]);
+
+  // Filter logic
   const filteredSchemes = schemes.filter((s) => {
     const q = debouncedQuery.trim().toLowerCase();
     const catNorm = category.toLowerCase();
 
     const title = (s.title || "").toLowerCase();
-    const eligibility = (s.eligibility || "").toLowerCase();
-    const benefits = (s.benefits || "").toLowerCase();
-    const details = (s.details || "").toLowerCase();
     const schemeCat = (s.category || "").toLowerCase();
 
-    const matchesCategory = catNorm === "all" || schemeCat === catNorm;
+    // Convert arrays (eligibility, benefits) to strings
+    const eligibility = Array.isArray(s.eligibility)
+      ? s.eligibility.map((e) => e.en).join(" ").toLowerCase()
+      : (s.eligibility || "").toLowerCase();
+
+    const benefits = Array.isArray(s.benefits)
+      ? s.benefits.map((b) => b.en).join(" ").toLowerCase()
+      : (s.benefits || "").toLowerCase();
+
+    const details = Array.isArray(s.descriptionPoints)
+      ? s.descriptionPoints.map((d) => d.en).join(" ").toLowerCase()
+      : (s.descriptionPoints || "").toLowerCase();
+
+    const matchesCategory = catNorm === "all" || schemeCat.includes(catNorm);
     if (!matchesCategory) return false;
 
     if (!q) return true;
@@ -46,13 +82,11 @@ export default function SchemesPage() {
     return combined.includes(q);
   });
 
-  useEffect(() => {
-    if (scrollRef.current) scrollRef.current.scrollTop = 0;
-  }, [debouncedQuery, category]);
-
   return (
     <div className="font-sans bg-gray-50 min-h-screen">
       <Header />
+
+      {/* Hero Section */}
       <section className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-20 px-6">
         <div className="max-w-5xl mx-auto text-center">
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">
@@ -66,10 +100,10 @@ export default function SchemesPage() {
         </div>
       </section>
 
-      {/* Controls */}
+      {/* Filters & Search */}
       <section className="max-w-6xl mx-auto px-6 py-10">
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
-          {/* Search */}
+          {/* Search Bar */}
           <div className="flex items-center w-full md:w-1/2 bg-white rounded-xl shadow p-3">
             <Search className="text-gray-400 w-5 h-5 mr-2" />
             <input
@@ -92,7 +126,7 @@ export default function SchemesPage() {
             )}
           </div>
 
-          {/* Categories */}
+          {/* Category Filter */}
           <div className="flex flex-wrap gap-3">
             {categories.map((cat) => {
               const active = category === cat;
@@ -117,16 +151,18 @@ export default function SchemesPage() {
           </div>
         </div>
 
+        {/* Scheme Cards */}
         <div ref={scrollRef} className="max-h-[600px] overflow-y-auto pr-2">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredSchemes.length > 0 ? (
-              // Sort schemes by date (latest first)
               filteredSchemes
-                .slice() // create a copy so original array is not mutated
-                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .slice()
+                .sort((a, b) =>
+                  (b.launchDate || "").localeCompare(a.launchDate || "")
+                )
                 .map((scheme) => (
                   <div
-                    key={scheme.id}
+                    key={scheme._id}
                     className="bg-white rounded-2xl shadow-md hover:shadow-xl transition p-6 border-l-4 border-blue-600 flex flex-col justify-between"
                   >
                     <div>
@@ -140,26 +176,27 @@ export default function SchemesPage() {
                       </div>
 
                       <p className="text-gray-500 text-sm mb-2">
-                        <strong>Date:</strong>{" "}
-                        {new Date(scheme.date).toLocaleDateString("en-IN", {
-                          year: "numeric",
-                          month: "short",
-                          day: "numeric",
-                        })}
+                        <strong>Launch Date:</strong>{" "}
+                        {scheme.launchDate || "—"}
                       </p>
 
                       <p className="text-gray-600 mb-2">
                         <strong>Eligibility:</strong>{" "}
-                        {scheme.eligibility || "—"}
+                        {Array.isArray(scheme.eligibility)
+                          ? scheme.eligibility.map((e) => e.en).join(", ")
+                          : scheme.eligibility || "—"}
                       </p>
 
                       <p className="text-gray-600 mb-4">
-                        <strong>Benefits:</strong> {scheme.benefits || "—"}
+                        <strong>Benefits:</strong>{" "}
+                        {Array.isArray(scheme.benefits)
+                          ? scheme.benefits.map((b) => b.en).join(", ")
+                          : scheme.benefits || "—"}
                       </p>
                     </div>
 
                     <Link
-                      href={`/schemes/${scheme.id}`}
+                      href={`/schemes/${scheme._id}`}
                       className="mt-auto inline-block text-blue-600 font-semibold hover:underline"
                     >
                       View Details →
