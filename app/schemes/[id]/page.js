@@ -96,6 +96,7 @@ export default function SchemeDetail({ params }) {
               width={1000}
               height={600}
               className="rounded-xl shadow w-full h-64 sm:h-[400px] object-cover"
+              priority
             />
           </div>
         )}

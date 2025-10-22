@@ -82,7 +82,6 @@ export default function NewsPage() {
     setCardsToShow((prev) => ({ ...prev, [key]: (prev[key] || 3) + 3 }));
   };
 
-  // ✅ navigate to detail page
   const handleReadMore = (id) => {
     router.push(`/news/${id}`);
   };
@@ -175,7 +174,7 @@ export default function NewsPage() {
                             : "max-h-0"
                         }`}
                       >
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-2">
                           {weekNews.slice(0, visibleCount).map((news) => (
                             <div
                               key={news._id || news.id}
@@ -206,7 +205,6 @@ export default function NewsPage() {
                                 </p>
                               )}
 
-                              {/* ✅ Updated Read More button */}
                               <button
                                 onClick={() => handleReadMore(news._id || news.id)}
                                 className="mt-auto text-blue-600 hover:underline self-start"

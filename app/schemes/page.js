@@ -22,17 +22,16 @@ export default function SchemesPage() {
     "Housing",
   ];
 
-  // Debounce user input for smooth searching
   useEffect(() => {
     const handler = setTimeout(() => setDebouncedQuery(query), 300);
     return () => clearTimeout(handler);
   }, [query]);
 
-  // Fetch schemes from API
   const fetchSchemes = async () => {
     try {
       const response = await fetch("/api/schemes");
       const data = await response.json();
+      console.log(data);
       return data;
     } catch (error) {
       console.error("Error fetching schemes:", error);
@@ -53,7 +52,6 @@ export default function SchemesPage() {
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
   }, [debouncedQuery, category]);
 
-  // Filter logic
   const filteredSchemes = schemes.filter((s) => {
     const q = debouncedQuery.trim().toLowerCase();
     const catNorm = category.toLowerCase();
