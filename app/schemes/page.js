@@ -9,6 +9,7 @@ export default function SchemesPage() {
   const [schemes, setSchemes] = useState([]);
   const [debouncedQuery, setDebouncedQuery] = useState(query);
   const [category, setCategory] = useState("All");
+  const [isLoading, setIsLoading] = useState(true); // 🟢 Added loading state
   const scrollRef = useRef(null);
 
   const categories = [
@@ -31,7 +32,6 @@ export default function SchemesPage() {
     try {
       const response = await fetch("/api/schemes");
       const data = await response.json();
-      console.log(data);
       return data;
     } catch (error) {
       console.error("Error fetching schemes:", error);
@@ -41,13 +41,14 @@ export default function SchemesPage() {
 
   useEffect(() => {
     const loadSchemes = async () => {
+      setIsLoading(true); // 🟢 Start loading
       const fetchedSchemes = await fetchSchemes();
       setSchemes(fetchedSchemes);
+      setIsLoading(false); // 🟢 Stop loading
     };
     loadSchemes();
   }, []);
 
-  // Scroll to top when filters/search change
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
   }, [debouncedQuery, category]);
@@ -59,7 +60,6 @@ export default function SchemesPage() {
     const title = (s.title || "").toLowerCase();
     const schemeCat = (s.category || "").toLowerCase();
 
-    // Convert arrays (eligibility, benefits) to strings
     const eligibility = Array.isArray(s.eligibility)
       ? s.eligibility.map((e) => e.en).join(" ").toLowerCase()
       : (s.eligibility || "").toLowerCase();
@@ -149,66 +149,73 @@ export default function SchemesPage() {
           </div>
         </div>
 
-        {/* Scheme Cards */}
+        {/* Schemes Section with Loader */}
         <div ref={scrollRef} className="max-h-[600px] overflow-y-auto pr-2">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredSchemes.length > 0 ? (
-              filteredSchemes
-                .slice()
-                .sort((a, b) =>
-                  (b.launchDate || "").localeCompare(a.launchDate || "")
-                )
-                .map((scheme) => (
-                  <div
-                    key={scheme._id}
-                    className="bg-white rounded-2xl shadow-md hover:shadow-xl transition p-6 border-l-4 border-blue-600 flex flex-col justify-between"
-                  >
-                    <div>
-                      <div className="flex justify-between items-start mb-2">
-                        <h2 className="text-xl font-semibold text-gray-800">
-                          {scheme.title}
-                        </h2>
-                        <span className="text-sm font-medium px-2 py-1 rounded-full bg-blue-50 text-blue-700">
-                          {scheme.category || "Uncategorized"}
-                        </span>
+          {isLoading ? (
+            // 🌀 Spinner only for the scheme content
+            <div className="flex justify-center items-center py-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredSchemes.length > 0 ? (
+                filteredSchemes
+                  .slice()
+                  .sort((a, b) =>
+                    (b.launchDate || "").localeCompare(a.launchDate || "")
+                  )
+                  .map((scheme) => (
+                    <div
+                      key={scheme._id}
+                      className="bg-white rounded-2xl shadow-md hover:shadow-xl transition p-6 border-l-4 border-blue-600 flex flex-col justify-between"
+                    >
+                      <div>
+                        <div className="flex justify-between items-start mb-2">
+                          <h2 className="text-xl font-semibold text-gray-800">
+                            {scheme.title}
+                          </h2>
+                          <span className="text-sm font-medium px-2 py-1 rounded-full bg-blue-50 text-blue-700">
+                            {scheme.category || "Uncategorized"}
+                          </span>
+                        </div>
+
+                        <p className="text-gray-500 text-sm mb-2">
+                          <strong>Launch Date:</strong>{" "}
+                          {scheme.launchDate || "—"}
+                        </p>
+
+                        <p className="text-gray-600 mb-2">
+                          <strong>Eligibility:</strong>{" "}
+                          {Array.isArray(scheme.eligibility)
+                            ? scheme.eligibility.map((e) => e.en).join(", ")
+                            : scheme.eligibility || "—"}
+                        </p>
+
+                        <p className="text-gray-600 mb-4">
+                          <strong>Benefits:</strong>{" "}
+                          {Array.isArray(scheme.benefits)
+                            ? scheme.benefits.map((b) => b.en).join(", ")
+                            : scheme.benefits || "—"}
+                        </p>
                       </div>
 
-                      <p className="text-gray-500 text-sm mb-2">
-                        <strong>Launch Date:</strong>{" "}
-                        {scheme.launchDate || "—"}
-                      </p>
-
-                      <p className="text-gray-600 mb-2">
-                        <strong>Eligibility:</strong>{" "}
-                        {Array.isArray(scheme.eligibility)
-                          ? scheme.eligibility.map((e) => e.en).join(", ")
-                          : scheme.eligibility || "—"}
-                      </p>
-
-                      <p className="text-gray-600 mb-4">
-                        <strong>Benefits:</strong>{" "}
-                        {Array.isArray(scheme.benefits)
-                          ? scheme.benefits.map((b) => b.en).join(", ")
-                          : scheme.benefits || "—"}
-                      </p>
+                      <Link
+                        href={`/schemes/${scheme._id}`}
+                        className="mt-auto inline-block text-blue-600 font-semibold hover:underline"
+                      >
+                        View Details →
+                      </Link>
                     </div>
-
-                    <Link
-                      href={`/schemes/${scheme._id}`}
-                      className="mt-auto inline-block text-blue-600 font-semibold hover:underline"
-                    >
-                      View Details →
-                    </Link>
-                  </div>
-                ))
-            ) : (
-              <div className="col-span-full py-12 text-center">
-                <p className="text-gray-500">
-                  No schemes found — try different keywords or category.
-                </p>
-              </div>
-            )}
-          </div>
+                  ))
+              ) : (
+                <div className="col-span-full py-12 text-center">
+                  <p className="text-gray-500">
+                    No schemes found — try different keywords or category.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </section>
 

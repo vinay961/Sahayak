@@ -2,11 +2,13 @@
 import Link from "next/link";
 import Image from "next/image";
 import Header from "./components/header.js";
-import { schemes } from "@/data/schemes.js";
 import { useState, useEffect } from "react";
 
 export default function Home() {
   const [scrollY, setScrollY] = useState(0);
+  const [schemesData, setSchemesData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -14,10 +16,37 @@ export default function Home() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const fetchSchemes = async () => {
+    try {
+      setLoading(true);
+      setError(false);
+      const response = await fetch("/api/schemes");
+      if (!response.ok) throw new Error("Failed to fetch schemes");
+      const data = await response.json();
+      if (!data || data.length === 0) {
+        setSchemesData([]);
+        setError(true);
+      } else {
+        setSchemesData(data);
+      }
+    } catch (err) {
+      console.error("Error fetching schemes data:", err);
+      setError(true);
+      setSchemesData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchSchemes();
+  }, []);
+
   return (
     <div className="font-sans bg-gray-50 min-h-screen relative">
       <Header className="sticky top-0 z-50 bg-white shadow-md" />
 
+      {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-28 px-6 overflow-hidden">
         <div className="absolute -top-32 -left-32 w-96 h-96 bg-white rounded-full opacity-10 animate-pulse-slow"></div>
         <div className="absolute -bottom-32 -right-24 w-96 h-96 bg-purple-200 rounded-full opacity-10 animate-pulse-slow delay-200"></div>
@@ -47,6 +76,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Features Section */}
       <section className="max-w-7xl mx-auto px-6 py-20">
         <h2 className="text-3xl font-bold text-gray-800 mb-12 text-center">
           Why Use Our Platform?
@@ -103,38 +134,70 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Top Schemes Section with Loader & Error */}
       <section className="relative bg-gray-100 py-20 px-6">
         <h2 className="text-3xl font-bold text-gray-800 mb-12 text-center">
           Top Schemes
         </h2>
-        <div className="max-w-7xl mx-auto grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {schemes.slice(0, 3).map((scheme) => (
-            <div
-              key={scheme.id}
-              className="relative bg-white rounded-2xl shadow-md p-6 hover:shadow-xl hover:scale-105 transition-transform duration-300 overflow-hidden group"
+
+        {loading ? (
+          <div className="flex justify-center items-center">
+            <svg
+              className="animate-spin h-10 w-10 text-blue-600"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-indigo-100 opacity-30 pointer-events-none rounded-2xl"></div>
-
-              <h3 className="text-xl font-semibold mb-2 text-gray-800 relative z-10">
-                {scheme.title}
-              </h3>
-              <p className="text-gray-600 mb-1 relative z-10">
-                <strong>Eligibility:</strong> {scheme.eligibility}
-              </p>
-              <p className="text-gray-600 mb-3 relative z-10">
-                <strong>Benefits:</strong> {scheme.benefits}
-              </p>
-              <Link
-                href={`/schemes/${scheme.id}`}
-                className="text-blue-700 font-semibold hover:underline relative z-10"
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 018 8h-4l3 3-3 3h4a8 8 0 01-8 8v-4l-3 3 3 3v-4a8 8 0 01-8-8z"
+              ></path>
+            </svg>
+            <span className="ml-4 text-gray-600">Loading schemes...</span>
+          </div>
+        ) : error || schemesData.length === 0 ? (
+          <p className="text-center text-gray-600">No schemes found.</p>
+        ) : (
+          <div className="max-w-7xl mx-auto grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {schemesData.slice(0, 3).map((scheme) => (
+              <div
+                key={scheme._id}
+                className="relative bg-white rounded-2xl shadow-md p-6 hover:shadow-xl hover:scale-105 transition-transform duration-300 overflow-hidden group"
               >
-                View Details →
-              </Link>
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-indigo-100 opacity-30 pointer-events-none rounded-2xl"></div>
 
-              <div className="absolute inset-0 bg-gradient-to-t from-blue-600 to-indigo-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-2xl pointer-events-none"></div>
-            </div>
-          ))}
-        </div>
+                <h3 className="text-xl font-semibold mb-2 text-gray-800 relative z-10">
+                  {scheme.title}
+                </h3>
+                <p className="text-gray-600 mb-1 relative z-10">
+                  <strong>Eligibility:</strong>{" "}
+                  {scheme.eligibility[0]?.en || "Not specified"}
+                </p>
+                <p className="text-gray-600 mb-3 relative z-10">
+                  <strong>Benefits:</strong>{" "}
+                  {scheme.benefits[0]?.en || "Not specified"}
+                </p>
+                <Link
+                  href={`/schemes/${scheme._id}`}
+                  className="text-blue-700 font-semibold hover:underline relative z-10"
+                >
+                  View Details →
+                </Link>
+
+                <div className="absolute inset-0 bg-gradient-to-t from-blue-600 to-indigo-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-2xl pointer-events-none"></div>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       <footer className="bg-white border-t py-6 text-center text-gray-600 text-xs sm:text-sm">
