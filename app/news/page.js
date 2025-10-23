@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Header from "../components/header.js";
 import { ChevronDown, ChevronUp, Search } from "lucide-react";
-import { useRouter } from "next/navigation"; // ✅ added
+import { useRouter } from "next/navigation"; 
 
 export default function NewsPage() {
   const [newsData, setNewsData] = useState([]);
@@ -13,7 +13,7 @@ export default function NewsPage() {
   const [expandedMonths, setExpandedMonths] = useState({});
   const [expandedWeeks, setExpandedWeeks] = useState({});
   const [cardsToShow, setCardsToShow] = useState({});
-  const router = useRouter(); // ✅ for navigation
+  const router = useRouter(); 
 
   const categories = [
     "All",
@@ -235,7 +235,7 @@ export default function NewsPage() {
         })}
       </section>
 
-      <footer className="fixed bottom-0 left-0 w-full bg-white py-4 shadow-inner z-50">
+      <footer className="bg-white py-8 shadow-inner">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-gray-600">
             &copy; 2025 Social Welfare Platform. All rights reserved.
