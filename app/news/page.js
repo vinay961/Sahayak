@@ -1,7 +1,6 @@
 "use client";
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import Header from "../components/header.js";
 import { ChevronDown, ChevronUp, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -31,6 +30,7 @@ export default function NewsPage() {
     try {
       const response = await fetch("/api/news");
       const data = await response.json();
+      console.log(data);
       setNewsData(data);
     } catch (error) {
       console.error("Error fetching news data:", error);
@@ -91,7 +91,6 @@ export default function NewsPage() {
 
   return (
     <div className="flex flex-col min-h-screen font-sans bg-gray-50">
-      {/* 🔹 Header */}
       <div className="fixed top-0 left-0 w-full z-50">
         <Header />
       </div>
@@ -193,7 +192,15 @@ export default function NewsPage() {
                                 : "max-h-0"
                             }`}
                           >
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-2">
+                            {/* ✅ Scrollable container on small screens */}
+                            <div
+                              className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-2 ${
+                                expandedWeeks[key] &&
+                                visibleCount > 3
+                                  ? "sm:max-h-none max-h-[500px] overflow-y-auto"
+                                  : ""
+                              }`}
+                            >
                               {weekNews.slice(0, visibleCount).map((news) => (
                                 <div
                                   key={news._id || news.id}
