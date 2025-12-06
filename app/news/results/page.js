@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 /* localStorage helpers */
 function readStudiedFromLocal() {
@@ -66,7 +66,7 @@ function IconExternal({ className = "w-4 h-4" }) {
 
 /* --- Page component --- */
 export default function NewsResults() {
-  const searchParams = useSearchParams();
+  // replaced useSearchParams with a simple URLSearchParams state
   const router = useRouter();
 
   const [news, setNews] = useState([]);
@@ -77,11 +77,31 @@ export default function NewsResults() {
   const [selectedIndex, setSelectedIndex] = useState(null); // index into filtered array
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const month = searchParams.get("month") || "";
-  const week = searchParams.get("week") || "";
-  const category = searchParams.get("category") || "";
-  const q = (searchParams.get("q") || "").trim().toLowerCase();
+  // ------------------------
+  // URL params handling (simple beginner-friendly replacement)
+  // ------------------------
+  // Initialize from current location (guarded for SSR safety)
+  const [params, setParams] = useState(() => {
+    if (typeof window === "undefined") return new URLSearchParams();
+    return new URLSearchParams(window.location.search);
+  });
 
+  // Keep params in sync with browser navigation (back/forward)
+  useEffect(() => {
+    const onPop = () => setParams(new URLSearchParams(window.location.search));
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+
+  // helpers to read values (same as searchParams.get)
+  const month = (params.get("month") || "").toString();
+  const week = (params.get("week") || "").toString();
+  const category = (params.get("category") || "").toString();
+  const q = (params.get("q") || "").trim().toLowerCase();
+
+  // ------------------------
+  // data fetching + local storage
+  // ------------------------
   useEffect(() => {
     let mounted = true;
     setLoading(true);
@@ -318,7 +338,7 @@ export default function NewsResults() {
 
                                     {/* desktop-enhanced tooltip */}
                                     <div className="absolute right-1 top-full mt-2 hidden group-hover:block">
-                                      <div className="px-2 py-1 bg-slate-800 text-white text-xs rounded">{/* small label */}Details</div>
+                                      <div className="px-2 py-1 bg-slate-800 text-white text-xs rounded">Details</div>
                                     </div>
                                   </div>
                                 </div>
